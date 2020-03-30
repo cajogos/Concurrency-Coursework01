@@ -30,20 +30,20 @@ public class CurrentAccount implements BankAccount
 
 	public synchronized void deposit(Transaction transaction)
 	{
-		System.out.println("[Deposit] Account: " + this.getAccountNumber() + " - " + this.getAccountHolder()
-				+ " | Amount: " + transaction.getAmount() + " | From: " + transaction.getCustomerID());
+		System.out.println("[Deposit ] Account: " + this.getAccountNumber() + " - " + this.getAccountHolder()
+				+ " | Amount: " + transaction.getAmount()
+				+ " | From: " + transaction.getCustomerID());
 		this.balance += transaction.getAmount();
 		this.statement.addTransaction(transaction.getCustomerID(), transaction.getAmount(), this.balance);
-
 		notifyAll();
 	}
 
 	public synchronized void withdrawal(Transaction transaction)
 	{
-		System.out.println("[Withdrawal] Account: " + this.getAccountNumber() + " - " + this.getAccountHolder()
-				+ " | Amount: " + transaction.getAmount() + " | From: " + transaction.getCustomerID());
-
-		while (this.balance < transaction.getAmount())
+		System.out.println("[Withdraw] Account: " + this.getAccountNumber() + " - " + this.getAccountHolder()
+				+ " | Amount: " + transaction.getAmount()
+				+ " | From: " + transaction.getCustomerID());
+		while (this.balance < transaction.getAmount() || this.isOverdrawn())
 		{
 			System.out.println(this.getAccountHolder() + " has insufficient funds (" + this.getBalance()
 					+ "), waiting for deposit...");

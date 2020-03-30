@@ -20,16 +20,10 @@ public class University extends Thread
 	{
 		System.out.println(this.getName() + " will now take payment for the tuition fees.");
 		int[] tuitionFees = { 1200, 1200, 1350 };
-
-		// TODO: print out messages when actions performed
-		// TODO: Make 3 appropriate course withdrawals from Rik's account and 3 from
-		// Sue's account
-		// TODO: Sleep for a random amount of time.
-
 		for (int i = 0; i < tuitionFees.length; i++)
 		{
 			int fee = tuitionFees[i];
-			System.out.println(this.getName() + " performing tuition fee of " + fee);
+			System.out.println(this.getName() + " performing tuition fee " + (i + 1) + " of " + fee);
 			for (CurrentAccount registration : registrations)
 			{
 				registration.withdrawal(new Transaction(this.getName(), fee));

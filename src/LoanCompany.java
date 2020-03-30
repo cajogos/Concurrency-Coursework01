@@ -2,19 +2,13 @@ import java.util.ArrayList;
 
 public class LoanCompany extends Thread
 {
-	private final String companyName;
+	// Lenders are the connections to a student's current account
 	private ArrayList<CurrentAccount> lenders;
 
 	public LoanCompany(ThreadGroup threadGroup, String name)
 	{
 		super(threadGroup, name);
-		this.companyName = name;
 		this.lenders = new ArrayList<CurrentAccount>();
-	}
-
-	public String getCompanyName()
-	{
-		return this.companyName;
 	}
 
 	public void addLender(CurrentAccount lender)
@@ -24,24 +18,22 @@ public class LoanCompany extends Thread
 
 	public void run()
 	{
-		int[] depositAmounts = { 1200, 1200, 1350 };
-		// TODO: Print out messages of all actions performed (starts, terminates, makes
-		// deposit)
-		// TODO: Perform 3 student loan deposits in each student's account.
-		// TODO: Sleep for a random amount of time between each transaction
-		for (int depositAmount : depositAmounts)
+		System.out.println(this.getName() + " will now perform the financing loan deposits.");
+		int[] loanAmounts = { 2300, 2300, 2500 };
+		for (int i = 0; i < loanAmounts.length; i++)
 		{
+			int loan = loanAmounts[i];
+			System.out.println(this.getName() + " depositing loan " + (i + 1) + " of " + loan);
 			for (CurrentAccount lender : lenders)
 			{
-				lender.deposit(new Transaction(this.getName(), depositAmount));
-				try
-				{
-					Utilities.sleepForRandomAmountOfSeconds(0.1f, 1f);
-				} catch (InterruptedException e)
-				{
-				}
+				lender.deposit(new Transaction(this.getName(), loan));
 			}
-
+			try
+			{
+				Utilities.sleepForRandomAmountOfSeconds(0.5f, 3f);
+			} catch (InterruptedException e)
+			{
+			}
 		}
 	}
 }
