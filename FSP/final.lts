@@ -1,0 +1,18 @@
+ACCOUNT = (read -> update -> ACCOUNT).
+
+USER = (read -> withdraw -> update -> USER).
+COMPANY = (read -> loan -> update -> COMPANY).
+UNIVERSITY = (read -> deduct -> update -> UNIVERSITY).
+
+set Users = {rik,sue}
+
+|| RESOURCE_SHARE = (
+		user : USER
+	||	company : COMPANY
+	||	university : UNIVERSITY
+	|| {user,company,university} :: ACCOUNT
+).
+
+|| BANK_SYSTEM = (
+	Users : RESOURCE_SHARE
+).
