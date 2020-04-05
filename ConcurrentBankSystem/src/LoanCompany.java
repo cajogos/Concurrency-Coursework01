@@ -1,39 +1,43 @@
-import java.util.ArrayList;
-
 public class LoanCompany extends Thread
 {
-	// Lenders are the connections to a student's current account
-	private ArrayList<CurrentAccount> lenders;
+	private String companyName;
+	private BankAccount riksAccount;
+	private BankAccount suesAccount;
 
-	public LoanCompany(ThreadGroup threadGroup, String name)
+	private int[] loanAmounts = { 1800, 1800, 1900 };
+
+	public LoanCompany(ThreadGroup threadGroup, String companyName, BankAccount riksAccount, BankAccount suesAccount)
 	{
-		super(threadGroup, name);
-		this.lenders = new ArrayList<CurrentAccount>();
+		super(threadGroup, ("Thread.LoanCompany." + companyName.replace(" ", "")));
+		this.companyName = companyName;
+		this.riksAccount = riksAccount;
+		this.suesAccount = suesAccount;
 	}
 
-	public void addLender(CurrentAccount lender)
+	public String getCompanyName()
 	{
-		lenders.add(lender);
+		return this.companyName;
 	}
 
 	public void run()
 	{
-		System.out.println(this.getName() + " will now perform the financing loan deposits.");
-		int[] loanAmounts = { 2300, 2300, 2500 };
+		Utils.logThreadStart(this);
 		for (int i = 0; i < loanAmounts.length; i++)
 		{
-			int loan = loanAmounts[i];
-			System.out.println(this.getName() + " depositing loan " + (i + 1) + " of " + loan);
-			for (CurrentAccount lender : lenders)
-			{
-				lender.deposit(new Transaction(this.getName(), loan));
-			}
 			try
 			{
-				Utilities.sleepForRandomAmountOfSeconds(0.5f, 3f);
+				Utils.sleepRandSecs(0.5f, 3f);
 			} catch (InterruptedException e)
 			{
 			}
+
+			int loan = loanAmounts[i];
+
+			Utils.logInfo(this.getName() + " depositing loan " + (i + 1) + " of " + loan);
+
+			this.riksAccount.deposit(new Transaction(this.getCompanyName(), loan));
+			this.suesAccount.deposit(new Transaction(this.getCompanyName(), loan));
 		}
+		Utils.logThreadFinish(this);
 	}
 }

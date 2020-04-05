@@ -4,18 +4,22 @@ public class Student extends Thread
 {
 	private int studentID;
 	private String studentName;
-	private CurrentAccount currentAccount;
+	private BankAccount currentAccount;
 
-	private ArrayList<StudentTransaction> transactions;
+	/**
+	 * A list of transactions to make it easier to process different transactions
+	 * for different students.
+	 */
+	private ArrayList<SmartTransaction> transactions;
 
-	public Student(ThreadGroup threadGroup, String name, int studentID, CurrentAccount currentAccount)
+	public Student(ThreadGroup threadGroup, String studentName, int studentID, BankAccount currentAccount)
 	{
-		super(threadGroup, name);
+		super(threadGroup, ("Thread.Student." + studentName.replace(" ", "")));
 		this.studentID = studentID;
-		this.studentName = name;
+		this.studentName = studentName;
 		this.currentAccount = currentAccount;
 
-		this.transactions = new ArrayList<StudentTransaction>();
+		this.transactions = new ArrayList<SmartTransaction>();
 	}
 
 	public int getStudentID()
@@ -28,67 +32,44 @@ public class Student extends Thread
 		return this.studentName;
 	}
 
-	public CurrentAccount getCurrentAccount()
+	public BankAccount getCurrentAccount()
 	{
 		return this.currentAccount;
 	}
 
 	public void addWithdrawal(Transaction transaction)
 	{
-		this.transactions.add(new StudentTransaction(StudentTransaction.Type.WITHDRAWAL, transaction));
+		this.transactions.add(SmartTransaction.newWithdrawal(transaction));
 	}
 
 	public void addDeposit(Transaction transaction)
 	{
-		this.transactions.add(new StudentTransaction(StudentTransaction.Type.DEPOSIT, transaction));
+		this.transactions.add(SmartTransaction.newDeposit(transaction));
 	}
 
 	public void run()
 	{
-		for (StudentTransaction t : this.transactions)
+		Utils.logThreadStart(this);
+		for (SmartTransaction t : this.transactions)
 		{
-			System.out.println(this.getName() + " performing a transaction of " + t.transaction.getAmount());
-			if (t.isWithdrawal())
-			{
-				this.currentAccount.withdrawal(t.transaction);
-			} else if (t.isDeposit())
-			{
-				this.currentAccount.deposit(t.transaction);
-			}
 			try
 			{
-				Utilities.sleepForRandomAmountOfSeconds(0.5f, 3f);
+				Utils.sleepRandSecs(0.5f, 3f);
 			} catch (InterruptedException e)
 			{
 			}
+
+			Utils.logInfo(this.getStudentName() + " performed a transaction of " + t.getTransaction().getAmount()
+					+ " \"" + t.getTransaction().getCustomerID() + "\"");
+
+			if (t.isWithdrawal())
+			{
+				this.currentAccount.withdrawal(t.getTransaction());
+			} else if (t.isDeposit())
+			{
+				this.currentAccount.deposit(t.getTransaction());
+			}
 		}
-	}
-}
-
-// Class used to hold different transactions for each of the students
-class StudentTransaction
-{
-	enum Type
-	{
-		DEPOSIT, WITHDRAWAL
-	};
-
-	public Type type;
-	public Transaction transaction;
-
-	public StudentTransaction(Type type, Transaction transaction)
-	{
-		this.type = type;
-		this.transaction = transaction;
-	}
-
-	public boolean isWithdrawal()
-	{
-		return (this.type == Type.WITHDRAWAL);
-	}
-
-	public boolean isDeposit()
-	{
-		return (this.type == Type.DEPOSIT);
+		Utils.logThreadFinish(this);
 	}
 }
