@@ -43,15 +43,15 @@ public class BankingSystem
         Student rik = new Student(studentsGroup, "Rik", 2001, riksAccount);
         Student sue = new Student(studentsGroup, "Sue", 2002, suesAccount);
 
-        // Rik's personal transactions // TODO: A total of 6 transactions
+        // Rik's personal transactions
         rik.addWithdrawal(new Transaction("Tablet Computer", 750));
         rik.addWithdrawal(new Transaction("Huts of Pizza", 56));
         rik.addWithdrawal(new Transaction("Concurrent Chicken", 20));
         rik.addDeposit(new Transaction("ATM Deposit", 100));
         rik.addWithdrawal(new Transaction("Parking Ticket", 120));
-        rik.addWithdrawal(new Transaction("TV's R Us", 1200));
+        rik.addWithdrawal(new Transaction("TV's R Us", 800));
 
-        // Sue's personal transactions // TODO: A total of 6 transactions
+        // Sue's personal transactions
         sue.addDeposit(new Transaction("Scratch Card Win", 500));
         sue.addWithdrawal(new Transaction("Sainsco's Groceries", 120));
         sue.addWithdrawal(new Transaction("Concurrency Museum", 30));
