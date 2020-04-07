@@ -90,9 +90,9 @@ public class CurrentAccount implements BankAccount
         notifyAll();
     }
 
-    private synchronized void logTransaction(TransactionType type, Transaction transaction)
+    private void logTransaction(TransactionType type, Transaction transaction)
     {
-        String message = (type == TransactionType.DEPOSIT) ? "[ DEPOSIT ]" : "[WITHDRWAL]";
+        String message = (type == TransactionType.DEPOSIT) ? "[ DEPOSIT  ]" : "[WITHDRAWAL]";
         message += " ACC: " + this.getAccountNumber() + " [" + this.getAccountHolder() + "] | Val: "
                 + transaction.getAmount() + "\t| \"" + transaction.getCustomerID() + "\"";
         System.out.println(message);
