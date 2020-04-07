@@ -1,0 +1,32 @@
+const MAX = 4
+range TOTAL = 0..MAX
+const WITHDRAW_AMNT = 2
+const LOAN_AMNT = 1
+
+set ALL_DATA = { read[TOTAL], update[TOTAL] }
+
+USER = (
+    lock -> read[i : TOTAL] -> (
+        when(i >= WITHDRAW_AMNT) withdraw -> update[i - WITHDRAW_AMNT] -> unlock -> USER
+      | cancel -> update[i] -> unlock -> USER
+    )
+).
+
+COMPANY = (
+    lock -> read[i : TOTAL] -> (
+        when(i + LOAN_AMNT > MAX) deposit -> update[MAX] -> unlock -> COMPANY
+      | when(i + LOAN_AMNT <= MAX) deposit -> update[i + LOAN_AMNT] -> unlock -> COMPANY
+      | cancel -> update[i] -> unlock -> COMPANY
+    )
+).
+
+X(BALANCE = 1) = ACCOUNT[BALANCE],
+ACCOUNT[balance : TOTAL] = (
+    lock -> read[balance] -> update[y : TOTAL] -> unlock -> ACCOUNT[y]
+) + ALL_DATA.
+
+|| RESOURCE_SHARE = (
+    user : USER
+ || company : COMPANY
+ || { user, company } :: X(3)
+).

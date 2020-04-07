@@ -1,0 +1,15 @@
+const MAX = 15
+range TOTAL = 0..MAX
+const WITHDRAW_AMOUNT = 5
+const LOAN_AMOUNT = 3
+
+X = ACCOUNT[ 0 ] ,
+ACCOUNT[ i : TOTAL ] =  (
+		balance[i] -> (
+		when (i >= WITHDRAW_AMOUNT) withdraw[WITHDRAW_AMOUNT] -> ACCOUNT[ i - WITHDRAW_AMOUNT]
+	|	loan[LOAN_AMOUNT] -> 
+		if ( (i + LOAN_AMOUNT) > MAX) then
+			ACCOUNT[ MAX ]
+		else
+			ACCOUNT[ i + LOAN_AMOUNT]
+)).
