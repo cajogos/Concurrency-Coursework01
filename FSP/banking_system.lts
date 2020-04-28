@@ -2,9 +2,12 @@ const MAX = 5 // Maximum amount - to avoid too many states
 const T_VALUE = 1 // Transaction value
 range BAL_RANGE = 0..MAX
 
+// A set containing the two bank account definitions
+set StudentAccounts = { rikAcc, sueAcc }
+
 // Bank Account Process - It contains a BALANCE process that holds its current balance
-BANK_ACCOUNT(BAL_START = 3) = BALANCE[BAL_START], BALANCE[cur : BAL_RANGE] = (
-    acquire -> read[cur] -> write[new : BAL_RANGE] -> release -> BALANCE[new]
+BANK_ACCOUNT(BAL = 3) = BALANCE[BAL], BALANCE[curBal : BAL_RANGE] = (
+    acquire -> read[curBal] -> write[newBal : BAL_RANGE] -> release -> BALANCE[newBal]
 ).
 
 // Student Process - Can both withdraw or deposit
@@ -35,13 +38,12 @@ UNIVERSITY = (
 // The sharing of the BANK_ACCOUNT process
 || ACCOUNT_SHARE = (
        student : STUDENT
-    || loanCompany : LOAN_COMPANY
+    || company : LOAN_COMPANY
     || university : UNIVERSITY
-    || { student, loanCompany, university } :: BANK_ACCOUNT(3)
+    || { student, company, university } :: BANK_ACCOUNT(3)
 ).
 
 // Banking System with both accounts
-set StudentAccounts = { rikAcc, sueAcc }
 || BANK_SYSTEM = (
     StudentAccounts : ACCOUNT_SHARE
 ).
