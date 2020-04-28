@@ -2,13 +2,16 @@ const MAX = 5 // Maximum amount - to avoid too many states
 const T_VALUE = 1 // Transaction value
 range BAL_RANGE = 0..MAX
 
+// These are actions that have been synchronized between all processes
+set SyncActions = { read[BAL_RANGE], write[BAL_RANGE] }
+
 // A set containing the two bank account definitions
 set StudentAccounts = { rikAcc, sueAcc }
 
 // Bank Account Process - It contains a BALANCE process that holds its current balance
 BANK_ACCOUNT(BAL = 3) = BALANCE[BAL], BALANCE[curBal : BAL_RANGE] = (
     acquire -> read[curBal] -> write[newBal : BAL_RANGE] -> release -> BALANCE[newBal]
-).
+)+SyncActions.
 
 // Student Process - Can both withdraw or deposit
 STUDENT = (
@@ -17,7 +20,7 @@ STUDENT = (
         | when((cur + T_VALUE) <= MAX) deposit -> write[cur + T_VALUE] -> release -> STUDENT
         | write[cur] -> release -> STUDENT
     )
-).
+)+SyncActions.
 
 // Loan Company Process - Can only deposit
 LOAN_COMPANY = (
@@ -25,7 +28,7 @@ LOAN_COMPANY = (
           when((cur + T_VALUE) <= MAX) deposit -> write[cur + T_VALUE] -> release -> LOAN_COMPANY
         | write[cur] -> release -> LOAN_COMPANY
     )
-).
+)+SyncActions.
 
 // University Process - Can only withdraw
 UNIVERSITY = (
@@ -33,7 +36,7 @@ UNIVERSITY = (
           when(cur > T_VALUE) withdraw -> write[cur - T_VALUE] -> release -> UNIVERSITY
         | write[cur] -> release -> UNIVERSITY
     )
-).
+)+SyncActions.
 
 // The sharing of the BANK_ACCOUNT process
 || ACCOUNT_SHARE = (
