@@ -1,32 +1,38 @@
 const MAX = 4
 range TOTAL = 0..MAX
-const WITHDRAW_AMNT = 2
-const LOAN_AMNT = 1
+const TRANSACTION_VALUE = 1
 
-set ALL_DATA = { read[TOTAL], update[TOTAL] }
+// set EXTRAS = { get[TOTAL], put[TOTAL] }
 
-USER = (
-    lock -> read[i : TOTAL] -> (
-        when(i >= WITHDRAW_AMNT) withdraw -> update[i - WITHDRAW_AMNT] -> unlock -> USER
-      | cancel -> update[i] -> unlock -> USER
+STUDENT = (
+    acquire -> get[cur : TOTAL] -> (
+        when(cur > TRANSACTION_VALUE) withdraw -> put[cur - TRANSACTION_VALUE] -> release -> STUDENT
+      | when(cur + TRANSACTION_VALUE <= MAX) deposit -> put[cur + TRANSACTION_VALUE] -> release -> STUDENT
+      | cancel -> put[cur] -> release -> STUDENT
     )
 ).
 
-COMPANY = (
-    lock -> read[i : TOTAL] -> (
-        when(i + LOAN_AMNT > MAX) deposit -> update[MAX] -> unlock -> COMPANY
-      | when(i + LOAN_AMNT <= MAX) deposit -> update[i + LOAN_AMNT] -> unlock -> COMPANY
-      | cancel -> update[i] -> unlock -> COMPANY
+LOAN_COMPANY = (
+    acquire -> get[cur : TOTAL] -> (
+        when(cur + TRANSACTION_VALUE <= MAX) deposit -> put[cur + TRANSACTION_VALUE] -> release -> LOAN_COMPANY
+      | cancel -> put[cur] -> release -> LOAN_COMPANY
     )
 ).
 
-X(BALANCE = 1) = ACCOUNT[BALANCE],
-ACCOUNT[balance : TOTAL] = (
-    lock -> read[balance] -> update[y : TOTAL] -> unlock -> ACCOUNT[y]
-) + ALL_DATA.
+UNIVERSITY = (
+    acquire -> get[cur : TOTAL] -> (
+        when(cur > TRANSACTION_VALUE) withdraw -> put[cur - TRANSACTION_VALUE] -> release -> UNIVERSITY
+      | cancel -> put[cur] -> release -> UNIVERSITY
+    )
+).
 
-|| RESOURCE_SHARE = (
-    user : USER
- || company : COMPANY
- || { user, company } :: X(3)
+BANK_ACCOUNT(START_BAL = 1) = ACCOUNT[START_BAL], ACCOUNT[cur : TOTAL] = (
+    acquire -> get[cur] -> put[new : TOTAL] -> release -> ACCOUNT[new]
+).
+
+|| RESOURCE = (
+       rik : STUDENT
+    || company : LOAN_COMPANY
+    || uni: UNIVERSITY
+    || { rik, company, uni } :: BANK_ACCOUNT(2)
 ).

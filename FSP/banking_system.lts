@@ -1,0 +1,40 @@
+const MAX = 5 // Maximum amount - to avoid too many states
+const T_VALUE = 1 // Transaction value
+
+range TOTAL = 0..MAX
+
+// Account Process
+ACCOUNT = (
+    acquire -> get -> put -> release -> ACCOUNT
+).
+
+// Student Process
+STU = (
+    acquire -> get -> (
+          withdraw -> put -> release -> STU
+        | deposit -> put -> release -> STU
+        | cancel -> put -> release -> STU
+    )
+).
+
+// Loan Company Process
+COM = (
+    acquire -> get -> (
+          deposit -> put -> release -> COM
+        | cancel -> put -> release -> COM
+    )
+).
+
+// University Process
+UNI = (
+    acquire -> get -> (
+          withdraw -> put -> release -> UNI
+        | cancel -> put -> release -> UNI
+    )
+).
+
+
+|| BANK_ACCOUNT = (
+    student : STU || company : COM || university : UNI
+    || { student, company, university } :: ACCOUNT
+).
