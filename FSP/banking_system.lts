@@ -3,50 +3,52 @@ const T_VALUE = 1 // Transaction value
 range BAL_RANGE = 0..MAX
 
 // These are actions that have been synchronized between all processes
-set SyncActions = { read[BAL_RANGE], write[BAL_RANGE] }
-
-// A set containing the two bank account definitions
-set StudentAccounts = { rikAcc, sueAcc }
+set SyncActions = { acc.acquire, acc.release, acc.read[BAL_RANGE], acc.write[BAL_RANGE] }
 
 // Bank Account Process - It contains a BALANCE process that holds its current balance
 BANK_ACCOUNT(BAL = 3) = BALANCE[BAL], BALANCE[curBal : BAL_RANGE] = (
     acquire -> read[curBal] -> write[newBal : BAL_RANGE] -> release -> BALANCE[newBal]
-)+SyncActions.
+).
 
 // Student Process - Can both withdraw or deposit
 STUDENT = (
-    acquire -> read[cur :  BAL_RANGE] -> (
-          when(cur > T_VALUE) withdraw -> write[cur - T_VALUE] -> release -> STUDENT
-        | when((cur + T_VALUE) <= MAX) deposit -> write[cur + T_VALUE] -> release -> STUDENT
-        | write[cur] -> release -> STUDENT
+    acc.acquire -> acc.read[cur : BAL_RANGE] -> (
+          when(cur > T_VALUE) withdraw -> acc.write[cur - T_VALUE] -> acc.release -> STUDENT
+        | when((cur + T_VALUE) <= MAX) deposit -> acc.write[cur + T_VALUE] -> acc.release -> STUDENT
+        | acc.write[cur] -> acc.release -> STUDENT
     )
 )+SyncActions.
 
 // Loan Company Process - Can only deposit
 LOAN_COMPANY = (
-    acquire -> read[cur : BAL_RANGE] -> (
-          when((cur + T_VALUE) <= MAX) deposit -> write[cur + T_VALUE] -> release -> LOAN_COMPANY
-        | write[cur] -> release -> LOAN_COMPANY
+    acc.acquire -> acc.read[cur : BAL_RANGE] -> (
+          when((cur + T_VALUE) <= MAX) deposit -> acc.write[cur + T_VALUE] -> acc.release -> LOAN_COMPANY
+        | acc.write[cur] -> acc.release -> LOAN_COMPANY
     )
 )+SyncActions.
 
 // University Process - Can only withdraw
 UNIVERSITY = (
-    acquire -> read[cur : BAL_RANGE] -> (
-          when(cur > T_VALUE) withdraw -> write[cur - T_VALUE] -> release -> UNIVERSITY
-        | write[cur] -> release -> UNIVERSITY
+    acc.acquire -> acc.read[cur : BAL_RANGE] -> (
+          when(cur > T_VALUE) withdraw -> acc.write[cur - T_VALUE] -> acc.release -> UNIVERSITY
+        | acc.write[cur] -> acc.release -> UNIVERSITY
     )
 )+SyncActions.
 
 // The sharing of the BANK_ACCOUNT process
-|| ACCOUNT_SHARE = (
-       student : STUDENT
-    || company : LOAN_COMPANY
-    || university : UNIVERSITY
-    || { student, company, university } :: BANK_ACCOUNT(3)
+|| ACCOUNT = (
+       student: STUDENT
+    || lender: LOAN_COMPANY
+    || uni: UNIVERSITY
+
+    // Attach shared resource "acc" to the sub-processes
+    || { student, lender, uni } :: acc: BANK_ACCOUNT(3)
 ).
 
+// A set containing the two bank account definitions
+set StudentAccounts = { rik, sue }
+
 // Banking System with both accounts
-|| BANK_SYSTEM = (
-    StudentAccounts : ACCOUNT_SHARE
+|| BANKING_SYSTEM = (
+    StudentAccounts : ACCOUNT
 ).
