@@ -2,15 +2,12 @@ import java.util.ArrayList;
 
 public class Student extends Thread
 {
-    private int studentID;
-    private String studentName;
-    private BankAccount currentAccount;
+    private final int studentID;
+    private final String studentName;
+    private final BankAccount currentAccount;
 
-    /**
-     * A list of transactions to make it easier to process different transactions
-     * for different students.
-     */
-    private ArrayList<SmartTransaction> transactions;
+    // A list of transactions to make it easier to process different transactions for different students.
+    private final ArrayList<SmartTransaction> transactions;
 
     public Student(ThreadGroup threadGroup, String studentName, int studentID, BankAccount currentAccount)
     {
@@ -19,7 +16,7 @@ public class Student extends Thread
         this.studentName = studentName;
         this.currentAccount = currentAccount;
 
-        this.transactions = new ArrayList<SmartTransaction>();
+        this.transactions = new ArrayList<>();
     }
 
     public int getStudentID()
@@ -56,7 +53,7 @@ public class Student extends Thread
             {
                 Utils.sleepRandSecs(0.5f, 3f);
             }
-            catch (InterruptedException e)
+            catch (InterruptedException ignored)
             {
             }
 

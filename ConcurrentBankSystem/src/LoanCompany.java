@@ -1,10 +1,10 @@
 public class LoanCompany extends Thread
 {
-    private String companyName;
-    private BankAccount riksAccount;
-    private BankAccount suesAccount;
+    private final String companyName;
+    private final BankAccount riksAccount;
+    private final BankAccount suesAccount;
 
-    private int[] loanAmounts = {1800, 1800, 1900};
+    private final int[] loanAmounts = {1800, 1800, 1900};
 
     public LoanCompany(ThreadGroup threadGroup, String companyName, BankAccount riksAccount, BankAccount suesAccount)
     {
@@ -28,7 +28,7 @@ public class LoanCompany extends Thread
             {
                 Utils.sleepRandSecs(0.5f, 3f);
             }
-            catch (InterruptedException e)
+            catch (InterruptedException ignored)
             {
             }
 

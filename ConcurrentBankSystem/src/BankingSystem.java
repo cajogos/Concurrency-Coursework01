@@ -89,7 +89,7 @@ public class BankingSystem
             studentFinance.join();
             university.join();
         }
-        catch (InterruptedException e)
+        catch (InterruptedException ignored)
         {
         }
 

@@ -5,16 +5,18 @@ public class CurrentAccount implements BankAccount
         WITHDRAWAL, DEPOSIT
     }
 
+    private final Statement statement;
+
     private final String accountHolder;
     private final int accountNumber;
     private int balance;
-    private Statement statement;
 
     public CurrentAccount(String accountHolder, int accountNumber)
     {
         this.accountHolder = accountHolder;
         this.accountNumber = accountNumber;
         this.balance = 0;
+
         this.statement = new Statement(this.accountHolder, this.accountNumber);
     }
 
@@ -60,11 +62,11 @@ public class CurrentAccount implements BankAccount
             {
                 wait(5000); // Wait for a max of 5 seconds
             }
-            catch (InterruptedException e)
+            catch (InterruptedException ignored)
             {
             }
 
-            /**
+            /*
              * To avoid deadlock a timeout has been set on the wait for this thread.
              * Whenever a bank account does not get enough deposits in time to process all
              * the withdrawal transactions. A failover has been implemented to log the error
@@ -92,9 +94,9 @@ public class CurrentAccount implements BankAccount
 
     private void logTransaction(TransactionType type, Transaction transaction)
     {
-        String message = (type == TransactionType.DEPOSIT) ? "[ DEPOSIT  ]" : "[WITHDRAWAL]";
-        message += " ACC: " + this.getAccountNumber() + " [" + this.getAccountHolder() + "] | Val: "
-                + transaction.getAmount() + "\t| \"" + transaction.getCustomerID() + "\"";
+        String message = ((type == TransactionType.DEPOSIT) ? "[DEPOSIT]" : "[WITHDRAWAL]")
+                + (" ACC: " + this.getAccountNumber() + " [" + this.getAccountHolder() + "] | Val: "
+                + transaction.getAmount() + "\t| \"" + transaction.getCustomerID() + "\"");
         System.out.println(message);
     }
 

@@ -1,15 +1,11 @@
 import java.util.Random;
 
+/**
+ * A set of helpers to be used on another classes.
+ */
 public class Utils
 {
-    /**
-     * This function will trigger a Thread.sleep() for a random amount of seconds
-     * between two float values.
-     *
-     * @param start
-     * @param end
-     * @throws InterruptedException
-     */
+    // This function will trigger a Thread.sleep() for a random amount of seconds between two float values.
     public static void sleepRandSecs(float start, float end) throws InterruptedException
     {
         start *= 1000;
@@ -26,7 +22,7 @@ public class Utils
     /**
      * This will log to the Thread's state.
      *
-     * @param thread
+     * @param thread The thread information.
      */
     public static void logThreadState(Thread thread)
     {
@@ -36,7 +32,7 @@ public class Utils
     /**
      * This is used when a Thread's run() method is first called.
      *
-     * @param thread
+     * @param thread The thread information.
      */
     public static void logThreadStart(Thread thread)
     {
@@ -46,7 +42,7 @@ public class Utils
     /**
      * This is used at the end of a Thread's run() method.
      *
-     * @param thread
+     * @param thread The thread information.
      */
     public static void logThreadFinish(Thread thread)
     {
@@ -71,7 +67,7 @@ public class Utils
     /**
      * Basic logging function all other methods use this.
      *
-     * @param message
+     * @param message The message to log.
      */
     private static void log(String message)
     {

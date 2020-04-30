@@ -3,14 +3,14 @@
  */
 public class SmartTransaction
 {
-    private Transaction transaction;
-    private CurrentAccount.TransactionType type;
+    private final Transaction transaction;
+    private final CurrentAccount.TransactionType type;
 
     /**
      * Only allow the creation of these transactions via static methods.
      *
-     * @param type
-     * @param transaction
+     * @param type        The current transaction's type (Deposit/Withdrawal).
+     * @param transaction The transaction values.
      */
     private SmartTransaction(CurrentAccount.TransactionType type, Transaction transaction)
     {

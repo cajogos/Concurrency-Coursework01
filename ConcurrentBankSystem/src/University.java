@@ -1,10 +1,10 @@
 public class University extends Thread
 {
-    private String universityName;
-    private BankAccount riksAccount;
-    private BankAccount suesAccount;
+    private final String universityName;
+    private final BankAccount riksAccount;
+    private final BankAccount suesAccount;
 
-    private int[] tuitionFees = {1200, 1200, 1350};
+    private final int[] tuitionFees = {1200, 1200, 1350};
 
     public University(ThreadGroup threadGroup, String universityName, BankAccount riksAccount, BankAccount suesAccount)
     {
@@ -28,7 +28,7 @@ public class University extends Thread
             {
                 Utils.sleepRandSecs(0.5f, 3f);
             }
-            catch (InterruptedException e)
+            catch (InterruptedException ignored)
             {
             }
 
